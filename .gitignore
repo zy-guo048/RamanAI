@@ -1,0 +1,34 @@
+
+# Python 虚拟环境
+.venv/
+venv/
+
+# Python 缓存
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 环境变量和密钥
+.env
+.env.*
+
+# 原始光谱数据
+data/raw/
+
+# 临时处理结果
+results/
+
+# 大型模型文件
+*.pth
+*.pt
+*.ckpt
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+
+*.crdownload
