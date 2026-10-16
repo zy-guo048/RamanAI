@@ -33,10 +33,10 @@ def main():
 
     # 2. Compare the denoising wrapper with the direct RamanSPy call.
     direct_denoised = rp.preprocessing.denoise.SavGol(
-        window_length=9, polyorder=3
+        window_length=21, polyorder=3
     ).apply(spectrum)
     wrapped_denoised = denoise_spectrum(
-        spectrum, window_length=9, polyorder=3
+        spectrum, window_length=21, polyorder=3
     )
     np.testing.assert_allclose(
         wrapped_denoised.spectral_data,

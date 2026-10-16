@@ -24,7 +24,11 @@ def main():
 
     # 1. Read, denoise, and baseline-correct the spectrum.
     spectrum = load_spectrum(file_path)
-    denoised = denoise_spectrum(spectrum, window_length=9, polyorder=3)
+    denoised = denoise_spectrum(
+        spectrum,
+        window_length=21,
+        polyorder=3
+    )
     corrected = baseline_correct_spectrum(denoised, lam=1e6, p=0.01)
 
     x = corrected.spectral_axis
