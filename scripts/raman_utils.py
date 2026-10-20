@@ -100,3 +100,55 @@ def extract_peak_features(spectrum, peaks, properties):
             "Width_Height": float(widths[1][i]),
         })
     return features
+
+
+# ==========================================
+# 6. 拉曼光谱归一化
+# ==========================================
+
+def normalize_spectrum(spectrum, method="max"):
+    """
+    对拉曼光谱进行强度归一化。
+
+    参数:
+        spectrum: RamanSPy Spectrum 对象
+        method: 归一化方法，目前支持 "max"
+
+    返回:
+        normalized: 归一化后的 Spectrum 对象
+    """
+
+    # 1. 检查归一化方法
+    if method != "max":
+        raise ValueError(
+            f"不支持的归一化方法: {method}"
+        )
+
+    # 2. 获取光谱数据
+    x = spectrum.spectral_axis
+    y = spectrum.spectral_data
+
+    # 3. 检查强度数据
+    if not np.all(np.isfinite(y)):
+        raise ValueError(
+            "光谱包含无效强度数据"
+        )
+
+    # 4. 找到最大强度
+    max_intensity = np.max(y)
+
+    if max_intensity <= 0:
+        raise ValueError(
+            "光谱最大强度必须大于 0"
+        )
+
+    # 5. 最大值归一化
+    normalized_y = y / max_intensity
+
+    # 6. 创建新的 RamanSPy 光谱对象
+    normalized = rp.Spectrum(
+        normalized_y,
+        x
+    )
+
+    return normalized

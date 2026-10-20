@@ -3,6 +3,9 @@
 
 from pathlib import Path
 import csv
+import json
+import hashlib
+from datetime import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,15 +24,31 @@ def main():
     file_path = project_dir / "data" / "raw" / "sample_raw.txt"
     output_dir = project_dir / "results"
     output_dir.mkdir(parents=True, exist_ok=True)
+    # ======================================
+    # 实验参数配置
+    # ======================================
+
+    SG_WINDOW = 21
+    SG_POLYORDER = 3
+
+    ASLS_LAM = 1e6
+    ASLS_P = 0.01
+
+    PEAK_PROMINENCE = 1000
+    PEAK_DISTANCE = 10
 
     # 1. Read, denoise, and baseline-correct the spectrum.
     spectrum = load_spectrum(file_path)
     denoised = denoise_spectrum(
         spectrum,
-        window_length=21,
-        polyorder=3
+        window_length=SG_WINDOW,
+        polyorder=SG_POLYORDER
     )
-    corrected = baseline_correct_spectrum(denoised, lam=1e6, p=0.01)
+    corrected = baseline_correct_spectrum(
+        denoised,
+        lam=ASLS_LAM,
+        p=ASLS_P
+    )
 
     x = corrected.spectral_axis
     y = corrected.spectral_data
@@ -45,7 +64,9 @@ def main():
 
     # 3. Final detection and feature extraction.
     peaks, properties = detect_peaks(
-        corrected, prominence=1000, distance=10
+        corrected,
+        prominence=PEAK_PROMINENCE,
+        distance=PEAK_DISTANCE
     )
     features = extract_peak_features(corrected, peaks, properties)
 
@@ -115,6 +136,70 @@ def main():
         writer.writeheader()
         for item in features:
             writer.writerow(item)
+    # ======================================
+    # 保存本次分析参数
+    # ======================================
+
+    parameters = {
+        "experiment": "RamanAI Experiment 4",
+
+        "run_time": datetime.now().astimezone().isoformat(
+            timespec="seconds"
+        ),
+
+        "input_file": {
+            "path": file_path.relative_to(
+                project_dir
+            ).as_posix(),
+
+            "sha256": hashlib.sha256(
+                file_path.read_bytes()
+            ).hexdigest()
+        },
+
+        "sg_denoising": {
+            "window_length": SG_WINDOW,
+            "polyorder": SG_POLYORDER
+        },
+
+        "asls_baseline": {
+            "lam": ASLS_LAM,
+            "p": ASLS_P
+        },
+
+        "peak_detection": {
+            "prominence": PEAK_PROMINENCE,
+            "distance": PEAK_DISTANCE
+        },
+
+        "peak_width": {
+            "method": "half_prominence",
+            "rel_height": 0.5
+        },
+
+        "results": {
+            "peak_count": len(features),
+            "csv_file": csv_path.name
+        }
+    }
+
+    # JSON 输出路径
+    json_path = output_dir / "04_analysis_parameters.json"
+
+    # 保存参数记录
+    with json_path.open(
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        json.dump(
+            parameters,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
+
+    print("参数记录已保存：", json_path)
 
     print(f"\n正式检测到 {len(features)} 个候选峰")
     print("输出目录：", output_dir)

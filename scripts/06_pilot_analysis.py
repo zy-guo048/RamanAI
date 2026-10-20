@@ -157,7 +157,7 @@ print("\n前三条 RAW 光谱分析完成！")
 output_dir = project_dir / "results"
 output_dir.mkdir(parents=True, exist_ok=True)
 
-csv_file = output_dir / "06_all_pilot_peak_features.csv"
+csv_file = output_dir / "06_all_raw_peak_features.csv"
 
 columns = [
     "Material",

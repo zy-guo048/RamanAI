@@ -14,9 +14,13 @@ __pycache__/
 # 环境变量和密钥
 .env
 .env.*
+.streamlit/secrets.toml
 
 # 原始光谱数据
 data/raw/
+data/external/
+fair_oriented/
+excellent_unoriented/
 
 # 临时处理结果
 results/
@@ -32,3 +36,10 @@ Thumbs.db
 
 
 *.crdownload
+
+# RRUFF dataset archives
+fair_oriented.zip
+excellent_unoriented.zip
+
+# Local historical backup
+old_04_find_peaks.py
