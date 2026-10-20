@@ -20,6 +20,14 @@ import pandas as pd
 import streamlit as st
 
 from raman_app.export import build_peak_csv_filename, peak_features_to_csv
+from raman_app.i18n import (
+    DEFAULT_LANGUAGE,
+    SUPPORTED_LANGUAGES,
+    language_label,
+    normalize_language,
+    translate,
+    translate_error,
+)
 from raman_app.pipeline import (
     DEFAULT_PEAK_PROMINENCE,
     AnalysisResult,
@@ -30,6 +38,8 @@ from raman_app.pipeline import (
 LOGGER = logging.getLogger(__name__)
 ANALYSIS_RESULT_STATE_KEY = "ramanai_analysis_result"
 ANALYSIS_REQUEST_STATE_KEY = "ramanai_analysis_request"
+LANGUAGE_STATE_KEY = "ramanai_language"
+LANGUAGE_SELECTOR_STATE_KEY = "ramanai_language_selector"
 
 
 PEAK_TABLE_COLUMNS = [
@@ -39,13 +49,28 @@ PEAK_TABLE_COLUMNS = [
     "Prominence",
     "Half_Prominence_Width_cm-1",
 ]
-PEAK_TABLE_LABELS = {
-    "Peak_ID": "峰编号",
-    "Position_cm-1": "峰位 (cm⁻¹)",
-    "Intensity": "校正后强度 (a.u.)",
-    "Prominence": "突出度",
-    "Half_Prominence_Width_cm-1": "半突出度宽度 (cm⁻¹)",
+PEAK_TABLE_LABEL_KEYS = {
+    "Peak_ID": "table_peak_id",
+    "Position_cm-1": "table_position",
+    "Intensity": "table_intensity",
+    "Prominence": "table_prominence",
+    "Half_Prominence_Width_cm-1": "table_width",
 }
+
+
+@st.dialog("⚙️ 设置 / Settings", icon=":material/settings:")
+def _show_settings_dialog() -> None:
+    language = _current_language()
+    if LANGUAGE_SELECTOR_STATE_KEY not in st.session_state:
+        st.session_state[LANGUAGE_SELECTOR_STATE_KEY] = language
+    st.radio(
+        translate(language, "language"),
+        options=SUPPORTED_LANGUAGES,
+        format_func=language_label,
+        key=LANGUAGE_SELECTOR_STATE_KEY,
+        on_change=_apply_language_selection,
+    )
+    st.caption(translate(language, "language_note"))
 
 
 def main() -> None:
@@ -54,31 +79,43 @@ def main() -> None:
         page_icon="🔬",
         layout="wide",
     )
-    st.title("RamanAI — 智能拉曼光谱分析系统")
-    st.caption("上传单条 RRUFF RAW TXT 光谱，使用固定预处理参数和可调突出度进行分析。")
     _initialize_analysis_state()
+    language = _current_language()
+
+    title_column, settings_column = st.columns(
+        [5, 1],
+        vertical_alignment="center",
+    )
+    with title_column:
+        st.title(translate(language, "app_title"))
+    with settings_column:
+        if st.button(
+            translate(language, "settings"),
+            key="open_settings",
+            width="stretch",
+        ):
+            _show_settings_dialog()
+    st.caption(translate(language, "app_caption"))
 
     uploaded_file = st.file_uploader(
-        "上传 RRUFF RAW 光谱",
+        translate(language, "upload_file"),
         type=["txt"],
         key="spectrum_upload",
-        help="文件应包含 # 注释行和逗号分隔的两列数值。",
+        help=translate(language, "upload_help"),
     )
     prominence = st.number_input(
-        "候选峰突出度阈值",
+        translate(language, "peak_prominence"),
         min_value=0.0,
         value=DEFAULT_PEAK_PROMINENCE,
         step=10.0,
         format="%.1f",
         key="peak_prominence",
-        help="该阈值应用于未归一化的 AsLS 基线校正光谱。",
+        help=translate(language, "peak_prominence_help"),
         icon=":material/tune:",
     )
-    st.warning(
-        "较低的突出度阈值可能引入噪声峰；检测结果仅表示候选峰。"
-    )
+    st.warning(translate(language, "prominence_warning"))
     submitted = st.button(
-        "开始分析",
+        translate(language, "start_analysis"),
         type="primary",
         key="analyze_spectrum",
         icon=":material/analytics:",
@@ -86,7 +123,7 @@ def main() -> None:
 
     if uploaded_file is None:
         _clear_analysis_state()
-        st.info("请选择一个 .txt 光谱文件，然后点击“开始分析”。")
+        st.info(translate(language, "select_file_prompt"))
         return
 
     file_bytes = uploaded_file.getvalue()
@@ -98,10 +135,12 @@ def main() -> None:
     if st.session_state[ANALYSIS_REQUEST_STATE_KEY] != request_key:
         _clear_analysis_state()
 
-    st.write(f"已选择文件：`{uploaded_file.name}`")
+    st.markdown(
+        translate(language, "selected_file", filename=uploaded_file.name)
+    )
     if submitted:
         try:
-            with st.spinner("正在分析光谱……"):
+            with st.spinner(translate(language, "analyzing")):
                 result = analyze_uploaded_spectrum(
                     file_bytes,
                     filename=uploaded_file.name,
@@ -109,7 +148,10 @@ def main() -> None:
                 )
         except (TypeError, ValueError) as exc:
             _clear_analysis_state()
-            st.error(str(exc), title="无法分析上传文件")
+            st.error(
+                translate_error(language, str(exc)),
+                title=translate(language, "input_error_title"),
+            )
         except Exception:
             _clear_analysis_state()
             LOGGER.exception(
@@ -117,8 +159,8 @@ def main() -> None:
                 uploaded_file.name,
             )
             st.error(
-                "光谱处理过程中发生内部错误，详细信息已记录到服务器日志。",
-                title="内部错误",
+                translate(language, "internal_error_message"),
+                title=translate(language, "internal_error_title"),
             )
         else:
             st.session_state[ANALYSIS_RESULT_STATE_KEY] = result
@@ -126,59 +168,59 @@ def main() -> None:
 
     result = st.session_state[ANALYSIS_RESULT_STATE_KEY]
     if result is not None:
-        _render_result(result)
+        _render_result(result, language)
 
 
-def _render_result(result: AnalysisResult) -> None:
-    st.success("光谱分析完成。")
+def _render_result(result: AnalysisResult, language: str) -> None:
+    st.success(translate(language, "analysis_complete"))
 
     file_column, points_column, peaks_column = st.columns(3)
-    file_column.metric("文件名", result.filename)
-    points_column.metric("数据点数", result.point_count)
-    peaks_column.metric("候选峰数量", result.peak_count)
+    file_column.metric(translate(language, "filename"), result.filename)
+    points_column.metric(translate(language, "point_count"), result.point_count)
+    peaks_column.metric(translate(language, "peak_count"), result.peak_count)
 
-    _render_parameters(result)
+    _render_parameters(result, language)
 
-    st.subheader("预处理光谱")
-    processing_figure = _create_processing_figure(result)
+    st.subheader(translate(language, "preprocessed_spectra"))
+    processing_figure = _create_processing_figure(result, language)
     st.pyplot(
         processing_figure,
         clear_figure=True,
-        alt="原始、SG 去噪和 AsLS 基线校正光谱",
+        alt=translate(language, "processing_plot_alt"),
     )
     plt.close(processing_figure)
 
-    st.subheader("最大值归一化光谱")
-    normalized_figure = _create_normalized_figure(result)
+    st.subheader(translate(language, "normalized_spectrum_section"))
+    normalized_figure = _create_normalized_figure(result, language)
     st.pyplot(
         normalized_figure,
         clear_figure=True,
-        alt="最大值归一化后的基线校正光谱",
+        alt=translate(language, "normalized_plot_alt"),
     )
     plt.close(normalized_figure)
 
-    st.subheader("基线校正光谱与候选峰")
-    peak_figure = _create_peak_figure(result)
+    st.subheader(translate(language, "peak_plot_section"))
+    peak_figure = _create_peak_figure(result, language)
     st.pyplot(
         peak_figure,
         clear_figure=True,
-        alt="基线校正光谱及其候选峰标记",
+        alt=translate(language, "peak_plot_alt"),
     )
     plt.close(peak_figure)
 
-    st.subheader("候选峰特征")
-    peak_table = _build_peak_table(result)
+    st.subheader(translate(language, "peak_features"))
+    peak_table = _build_peak_table(result, language)
     if result.peak_count == 0:
-        st.info("当前参数下未检测到候选峰。")
+        st.info(translate(language, "no_peaks_found"))
     st.dataframe(
         peak_table,
         width="stretch",
         hide_index=True,
-        alt="候选峰的峰位、校正后强度、突出度和半突出度宽度",
+        alt=translate(language, "peak_table_alt"),
     )
-    st.caption("候选峰为算法检测结果，不代表矿物分类或分类准确率结论。")
+    st.caption(translate(language, "candidate_disclaimer"))
     st.download_button(
-        "下载候选峰特征 CSV",
+        translate(language, "download_csv"),
         data=peak_features_to_csv(result.peak_features),
         file_name=build_peak_csv_filename(result.filename),
         mime="text/csv;charset=utf-8",
@@ -188,37 +230,61 @@ def _render_result(result: AnalysisResult) -> None:
     )
 
 
-def _render_parameters(result: AnalysisResult) -> None:
+def _render_parameters(result: AnalysisResult, language: str) -> None:
     parameters = result.parameters
-    with st.expander("本次分析参数（未自动优化）", expanded=True):
+    with st.expander(
+        translate(language, "analysis_parameters"),
+        expanded=True,
+    ):
         st.markdown(
             "\n".join([
-                f"- SG 去噪：window_length={parameters.sg_window_length}，"
-                f"polyorder={parameters.sg_polyorder}",
-                f"- AsLS 基线校正：lam={parameters.asls_lam:g}，"
-                f"p={parameters.asls_p:g}",
-                f"- 候选峰检测：prominence={parameters.peak_prominence:g}，"
-                f"distance={parameters.peak_distance} 个采样点",
-                "- 峰宽：半突出度宽度，rel_height=0.5",
-                f"- 归一化：{parameters.normalization_method}",
+                "- " + translate(
+                    language,
+                    "parameter_sg",
+                    window_length=parameters.sg_window_length,
+                    polyorder=parameters.sg_polyorder,
+                ),
+                "- " + translate(
+                    language,
+                    "parameter_asls",
+                    lam=parameters.asls_lam,
+                    p=parameters.asls_p,
+                ),
+                "- " + translate(
+                    language,
+                    "parameter_peaks",
+                    prominence=parameters.peak_prominence,
+                    distance=parameters.peak_distance,
+                ),
+                "- " + translate(language, "parameter_width"),
+                "- " + translate(
+                    language,
+                    "parameter_normalization",
+                    method=parameters.normalization_method,
+                ),
             ])
         )
-        st.caption("寻峰在未归一化的 AsLS 基线校正光谱上执行。")
+        st.caption(translate(language, "peak_detection_note"))
 
 
-def _create_processing_figure(result: AnalysisResult):
+def _create_processing_figure(result: AnalysisResult, language: str):
     spectra = [
-        (result.raw_spectrum, "原始光谱", "Raw Intensity (a.u.)", "#4C78A8"),
+        (
+            result.raw_spectrum,
+            translate(language, "raw_spectrum_title"),
+            translate(language, "raw_intensity_axis"),
+            "#4C78A8",
+        ),
         (
             result.denoised_spectrum,
-            "SG 去噪光谱",
-            "SG-Denoised Intensity (a.u.)",
+            translate(language, "denoised_spectrum_title"),
+            translate(language, "denoised_intensity_axis"),
             "#F58518",
         ),
         (
             result.corrected_spectrum,
-            "AsLS 基线校正光谱",
-            "Baseline-Corrected Intensity (a.u.)",
+            translate(language, "corrected_spectrum_title"),
+            translate(language, "corrected_intensity_axis"),
             "#54A24B",
         ),
     ]
@@ -239,11 +305,11 @@ def _create_processing_figure(result: AnalysisResult):
         axis.set_title(title)
         axis.set_ylabel(ylabel)
         axis.grid(alpha=0.2)
-    axes[-1].set_xlabel("Raman Shift (cm$^{-1}$)")
+    axes[-1].set_xlabel(translate(language, "raman_shift_axis"))
     return figure
 
 
-def _create_normalized_figure(result: AnalysisResult):
+def _create_normalized_figure(result: AnalysisResult, language: str):
     spectrum = result.normalized_spectrum
     figure, axis = plt.subplots(figsize=(12, 4), constrained_layout=True)
     axis.plot(
@@ -252,14 +318,14 @@ def _create_normalized_figure(result: AnalysisResult):
         color="#B279A2",
         linewidth=1.1,
     )
-    axis.set_title("最大值归一化后的基线校正光谱")
-    axis.set_xlabel("Raman Shift (cm$^{-1}$)")
-    axis.set_ylabel("Max-Normalized Intensity")
+    axis.set_title(translate(language, "normalized_spectrum_title"))
+    axis.set_xlabel(translate(language, "raman_shift_axis"))
+    axis.set_ylabel(translate(language, "normalized_intensity_axis"))
     axis.grid(alpha=0.2)
     return figure
 
 
-def _create_peak_figure(result: AnalysisResult):
+def _create_peak_figure(result: AnalysisResult, language: str):
     spectrum = result.corrected_spectrum
     raman_shift = spectrum.spectral_axis
     intensity = spectrum.spectral_data
@@ -270,7 +336,7 @@ def _create_peak_figure(result: AnalysisResult):
         intensity,
         color="#4C78A8",
         linewidth=1.1,
-        label="Baseline-Corrected Spectrum",
+        label=translate(language, "corrected_line_label"),
     )
     if result.peak_count:
         axis.scatter(
@@ -279,27 +345,46 @@ def _create_peak_figure(result: AnalysisResult):
             color="#E45756",
             s=38,
             zorder=3,
-            label="Detected Candidate Peaks",
+            label=translate(language, "candidate_peak_label"),
         )
-    axis.set_title("AsLS 基线校正光谱上的候选峰")
-    axis.set_xlabel("Raman Shift (cm$^{-1}$)")
-    axis.set_ylabel("Baseline-Corrected Intensity (a.u.)")
+    axis.set_title(translate(language, "peak_plot_title"))
+    axis.set_xlabel(translate(language, "raman_shift_axis"))
+    axis.set_ylabel(translate(language, "corrected_intensity_axis"))
     axis.grid(alpha=0.2)
     axis.legend()
     return figure
 
 
-def _build_peak_table(result: AnalysisResult) -> pd.DataFrame:
+def _build_peak_table(result: AnalysisResult, language: str) -> pd.DataFrame:
     table = pd.DataFrame.from_records(
         result.peak_features,
         columns=PEAK_TABLE_COLUMNS,
     )
-    return table.rename(columns=PEAK_TABLE_LABELS)
+    labels = {
+        column: translate(language, label_key)
+        for column, label_key in PEAK_TABLE_LABEL_KEYS.items()
+    }
+    return table.rename(columns=labels)
 
 
 def _initialize_analysis_state() -> None:
     st.session_state.setdefault(ANALYSIS_RESULT_STATE_KEY, None)
     st.session_state.setdefault(ANALYSIS_REQUEST_STATE_KEY, None)
+    st.session_state.setdefault(LANGUAGE_STATE_KEY, DEFAULT_LANGUAGE)
+    st.session_state[LANGUAGE_STATE_KEY] = normalize_language(
+        st.session_state[LANGUAGE_STATE_KEY]
+    )
+
+
+def _current_language() -> str:
+    return normalize_language(st.session_state.get(LANGUAGE_STATE_KEY))
+
+
+def _apply_language_selection() -> None:
+    st.session_state[LANGUAGE_STATE_KEY] = normalize_language(
+        st.session_state.get(LANGUAGE_SELECTOR_STATE_KEY)
+    )
+    st.rerun(scope="app")
 
 
 def _clear_analysis_state() -> None:

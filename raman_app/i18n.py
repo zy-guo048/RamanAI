@@ -1,0 +1,220 @@
+"""Internationalization helpers for the RamanAI Streamlit interface."""
+
+DEFAULT_LANGUAGE = "zh_CN"
+SUPPORTED_LANGUAGES = ("zh_CN", "en")
+
+LANGUAGE_LABELS = {
+    "zh_CN": "简体中文 / Simplified Chinese",
+    "en": "English / 英语",
+}
+
+TRANSLATIONS = {
+    "zh_CN": {
+        "app_title": "RamanAI — 智能拉曼光谱分析系统",
+        "app_caption": "上传单条 RRUFF RAW TXT 光谱，使用固定预处理参数和可调突出度进行分析。",
+        "settings": "⚙️ 设置 / Settings",
+        "language": "界面语言",
+        "language_note": "选择后立即切换界面语言，不会重新计算当前光谱。",
+        "upload_file": "上传 RRUFF RAW 光谱",
+        "upload_help": "文件应包含 # 注释行和逗号分隔的两列数值。",
+        "peak_prominence": "候选峰突出度阈值",
+        "peak_prominence_help": "该阈值应用于未归一化的 AsLS 基线校正光谱。",
+        "prominence_warning": "较低的突出度阈值可能引入噪声峰；检测结果仅表示候选峰。",
+        "start_analysis": "开始分析",
+        "select_file_prompt": "请选择一个 .txt 光谱文件，然后点击“开始分析”。",
+        "selected_file": "已选择文件：`{filename}`",
+        "analyzing": "正在分析光谱……",
+        "input_error_title": "无法分析上传文件",
+        "internal_error_title": "内部错误",
+        "internal_error_message": "光谱处理过程中发生内部错误，详细信息已记录到服务器日志。",
+        "analysis_complete": "光谱分析完成。",
+        "filename": "文件名",
+        "point_count": "数据点数",
+        "peak_count": "候选峰数量",
+        "preprocessed_spectra": "预处理光谱",
+        "processing_plot_alt": "原始、SG 去噪和 AsLS 基线校正光谱",
+        "normalized_spectrum_section": "最大值归一化光谱",
+        "normalized_plot_alt": "最大值归一化后的基线校正光谱",
+        "peak_plot_section": "基线校正光谱与候选峰",
+        "peak_plot_alt": "基线校正光谱及其候选峰标记",
+        "peak_features": "候选峰特征",
+        "no_peaks_found": "当前参数下未检测到候选峰。",
+        "peak_table_alt": "候选峰的峰位、校正后强度、突出度和半突出度宽度",
+        "candidate_disclaimer": "候选峰为算法检测结果，不代表矿物分类或分类准确率结论。",
+        "download_csv": "下载候选峰特征 CSV",
+        "analysis_parameters": "本次分析参数（未自动优化）",
+        "parameter_sg": "SG 去噪：window_length={window_length}，polyorder={polyorder}",
+        "parameter_asls": "AsLS 基线校正：lam={lam:g}，p={p:g}",
+        "parameter_peaks": "候选峰检测：prominence={prominence:g}，distance={distance} 个采样点",
+        "parameter_width": "峰宽：半突出度宽度，rel_height=0.5",
+        "parameter_normalization": "归一化：{method}",
+        "peak_detection_note": "寻峰在未归一化的 AsLS 基线校正光谱上执行。",
+        "raw_spectrum_title": "原始光谱",
+        "raw_intensity_axis": "原始强度 (a.u.)",
+        "denoised_spectrum_title": "SG 去噪光谱",
+        "denoised_intensity_axis": "SG 去噪强度 (a.u.)",
+        "corrected_spectrum_title": "AsLS 基线校正光谱",
+        "corrected_intensity_axis": "基线校正强度 (a.u.)",
+        "raman_shift_axis": "Raman Shift (cm$^{{-1}}$)",
+        "normalized_spectrum_title": "最大值归一化后的基线校正光谱",
+        "normalized_intensity_axis": "最大值归一化强度",
+        "corrected_line_label": "基线校正光谱",
+        "candidate_peak_label": "检测到的候选峰",
+        "peak_plot_title": "AsLS 基线校正光谱上的候选峰",
+        "table_peak_id": "峰编号",
+        "table_position": "峰位 (cm⁻¹)",
+        "table_intensity": "校正后强度 (a.u.)",
+        "table_prominence": "突出度",
+        "table_width": "半突出度宽度 (cm⁻¹)",
+        "invalid_file": "上传文件无效，请检查文件格式和数据内容。",
+        "error_bytes": "上传内容必须是 bytes 类型。",
+        "error_empty_file": "上传文件为空。",
+        "error_file_too_large": "上传文件超过 5 MB 大小限制。",
+        "error_utf8": "上传文件必须是 UTF-8 编码的文本文件。",
+        "error_no_data": "上传文件不包含光谱数据。",
+        "error_format": "光谱数据格式错误：应为逗号分隔的两列数值。",
+        "error_two_columns": "光谱数据必须包含两列：拉曼位移、强度。",
+        "error_nonfinite": "光谱数据包含 NaN 或 Inf 等无效数值。",
+        "error_too_few_points": "光谱数据点不足：至少需要 21 个采样点。",
+        "error_axis_order": "拉曼位移必须严格递增，不能重复或降序。",
+        "error_filename_type": "文件名必须是字符串。",
+        "error_filename_empty": "文件名不能为空。",
+        "error_filename_whitespace": "文件名首尾不能包含空白字符。",
+        "error_filename_path": "文件名不能包含路径或无效字符。",
+        "error_extension": "仅支持扩展名为 .txt 的光谱文件。",
+        "error_prominence_numeric": "prominence 必须是数值。",
+        "error_prominence_finite": "prominence 必须是有限数值。",
+        "error_prominence_negative": "prominence 不能为负数。",
+        "error_max_intensity": "光谱最大强度必须大于 0。",
+    },
+    "en": {
+        "app_title": "RamanAI — Intelligent Raman spectrum analysis system",
+        "app_caption": "Upload one RRUFF RAW TXT spectrum for analysis with fixed preprocessing parameters and adjustable prominence.",
+        "settings": "⚙️ 设置 / Settings",
+        "language": "Interface language",
+        "language_note": "The interface switches immediately without recalculating the current spectrum.",
+        "upload_file": "Upload a RRUFF RAW spectrum",
+        "upload_help": "The file should contain # comment lines and two comma-separated numeric columns.",
+        "peak_prominence": "Candidate peak prominence threshold",
+        "peak_prominence_help": "This threshold is applied to the unnormalized AsLS baseline-corrected spectrum.",
+        "prominence_warning": "A lower prominence threshold may introduce noise peaks; all detected peaks are candidates only.",
+        "start_analysis": "Start analysis",
+        "select_file_prompt": "Select a .txt spectrum file, then click “Start analysis.”",
+        "selected_file": "Selected file: `{filename}`",
+        "analyzing": "Analyzing spectrum…",
+        "input_error_title": "Unable to analyze uploaded file",
+        "internal_error_title": "Internal error",
+        "internal_error_message": "An internal error occurred during spectrum processing. Details were recorded in the server log.",
+        "analysis_complete": "Spectrum analysis completed.",
+        "filename": "Filename",
+        "point_count": "Data points",
+        "peak_count": "Candidate peaks",
+        "preprocessed_spectra": "Preprocessed spectra",
+        "processing_plot_alt": "Raw, SG-denoised, and AsLS baseline-corrected spectra",
+        "normalized_spectrum_section": "Max-normalized spectrum",
+        "normalized_plot_alt": "Max-normalized baseline-corrected spectrum",
+        "peak_plot_section": "Baseline-corrected spectrum and candidate peaks",
+        "peak_plot_alt": "Baseline-corrected spectrum with candidate peak markers",
+        "peak_features": "Candidate peak features",
+        "no_peaks_found": "No candidate peaks were detected with the current parameters.",
+        "peak_table_alt": "Candidate peak positions, corrected intensities, prominences, and half-prominence widths",
+        "candidate_disclaimer": "Candidate peaks are algorithmic detections, not conclusions about mineral classification or classification accuracy.",
+        "download_csv": "Download candidate peak features CSV",
+        "analysis_parameters": "Parameters used in this analysis (not automatically optimized)",
+        "parameter_sg": "SG denoising: window_length={window_length}, polyorder={polyorder}",
+        "parameter_asls": "AsLS baseline correction: lam={lam:g}, p={p:g}",
+        "parameter_peaks": "Candidate peak detection: prominence={prominence:g}, distance={distance} samples",
+        "parameter_width": "Peak width: half-prominence width, rel_height=0.5",
+        "parameter_normalization": "Normalization: {method}",
+        "peak_detection_note": "Peak detection is performed on the unnormalized AsLS baseline-corrected spectrum.",
+        "raw_spectrum_title": "Raw spectrum",
+        "raw_intensity_axis": "Raw intensity (a.u.)",
+        "denoised_spectrum_title": "SG-denoised spectrum",
+        "denoised_intensity_axis": "SG-denoised intensity (a.u.)",
+        "corrected_spectrum_title": "AsLS baseline-corrected spectrum",
+        "corrected_intensity_axis": "Baseline-corrected intensity (a.u.)",
+        "raman_shift_axis": "Raman Shift (cm$^{{-1}}$)",
+        "normalized_spectrum_title": "Max-normalized baseline-corrected spectrum",
+        "normalized_intensity_axis": "Max-normalized intensity",
+        "corrected_line_label": "Baseline-corrected spectrum",
+        "candidate_peak_label": "Detected candidate peaks",
+        "peak_plot_title": "Candidate peaks on the AsLS baseline-corrected spectrum",
+        "table_peak_id": "Peak ID",
+        "table_position": "Position (cm⁻¹)",
+        "table_intensity": "Corrected intensity (a.u.)",
+        "table_prominence": "Prominence",
+        "table_width": "Half-prominence width (cm⁻¹)",
+        "invalid_file": "The uploaded file is invalid. Check its format and data content.",
+        "error_bytes": "Uploaded content must be provided as bytes.",
+        "error_empty_file": "The uploaded file is empty.",
+        "error_file_too_large": "The uploaded file exceeds the 5 MB size limit.",
+        "error_utf8": "The uploaded file must be a UTF-8 encoded text file.",
+        "error_no_data": "The uploaded file contains no spectrum data.",
+        "error_format": "Invalid spectrum format: expected two comma-separated numeric columns.",
+        "error_two_columns": "Spectrum data must contain two columns: Raman shift and intensity.",
+        "error_nonfinite": "Spectrum data contains invalid values such as NaN or Inf.",
+        "error_too_few_points": "The spectrum has too few data points; at least 21 samples are required.",
+        "error_axis_order": "Raman shift values must be strictly increasing, with no duplicates or descending values.",
+        "error_filename_type": "The filename must be a string.",
+        "error_filename_empty": "The filename cannot be empty.",
+        "error_filename_whitespace": "The filename cannot contain leading or trailing whitespace.",
+        "error_filename_path": "The filename cannot contain a path or invalid characters.",
+        "error_extension": "Only spectrum files with a .txt extension are supported.",
+        "error_prominence_numeric": "prominence must be numeric.",
+        "error_prominence_finite": "prominence must be a finite value.",
+        "error_prominence_negative": "prominence cannot be negative.",
+        "error_max_intensity": "The maximum spectrum intensity must be greater than 0.",
+    },
+}
+
+ERROR_MESSAGE_KEYS = {
+    "上传内容必须是 bytes 类型": "error_bytes",
+    "上传文件为空": "error_empty_file",
+    "上传文件超过 5 MB 大小限制": "error_file_too_large",
+    "上传文件必须是 UTF-8 编码的文本文件": "error_utf8",
+    "上传文件不包含光谱数据": "error_no_data",
+    "光谱数据格式错误：应为逗号分隔的两列数值": "error_format",
+    "光谱数据必须包含两列：拉曼位移、强度": "error_two_columns",
+    "光谱数据包含 NaN 或 Inf 等无效数值": "error_nonfinite",
+    "光谱数据点不足：至少需要 21 个采样点": "error_too_few_points",
+    "拉曼位移必须严格递增，不能重复或降序": "error_axis_order",
+    "文件名必须是字符串": "error_filename_type",
+    "文件名不能为空": "error_filename_empty",
+    "文件名首尾不能包含空白字符": "error_filename_whitespace",
+    "文件名不能包含路径或无效字符": "error_filename_path",
+    "仅支持扩展名为 .txt 的光谱文件": "error_extension",
+    "prominence 必须是数值": "error_prominence_numeric",
+    "prominence 必须是有限数值": "error_prominence_finite",
+    "prominence 不能为负数": "error_prominence_negative",
+    "光谱最大强度必须大于 0": "error_max_intensity",
+}
+
+
+def normalize_language(language: object) -> str:
+    """Return a supported language code, falling back to Simplified Chinese."""
+    if isinstance(language, str) and language in SUPPORTED_LANGUAGES:
+        return language
+    return DEFAULT_LANGUAGE
+
+
+def translate(language: object, key: str, **values: object) -> str:
+    """Translate a key using a safely normalized language code."""
+    normalized_language = normalize_language(language)
+    template = TRANSLATIONS[normalized_language][key]
+    return template.format(**values)
+
+
+def language_label(language: object) -> str:
+    """Return the bilingual label for a supported language option."""
+    return LANGUAGE_LABELS[normalize_language(language)]
+
+
+def translate_error(language: object, error_message: str) -> str:
+    """Translate known input errors without exposing internal details."""
+    normalized_language = normalize_language(language)
+    translation_key = ERROR_MESSAGE_KEYS.get(error_message)
+    if translation_key is not None:
+        return translate(normalized_language, translation_key)
+    if normalized_language == DEFAULT_LANGUAGE:
+        return error_message
+    return translate(normalized_language, "invalid_file")
