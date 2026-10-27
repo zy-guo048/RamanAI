@@ -1,14 +1,13 @@
 # RamanAI
 
-RamanAI 是一个基于 Python 的拉曼光谱科研软件项目。项目以稳定的 V1
-光谱分析流程为基础，正在扩展 RRUFF
-相关光谱数据的审计、批量预处理、相似度检索和严格评价流程。
+RamanAI 是一个基于 Python 和 Streamlit 的拉曼光谱预处理、候选峰分析与参考光谱匹配科研软件。
 
-> **项目状态说明：** 本 README 根据截至实验 11.2 的项目交接信息、Codex
-> 运行报告和已提供的结果文件整理。当前本地原始 `README.md`
-> 未在本轮提供，因此这是一份可用于审阅和合并的整合稿，而不是对现有
-> README 的逐行修改。具体 Git
-> 状态、依赖版本和本地文件路径应以项目当前工作区为准。
+实验 1--14 已完成。V2.0.0 科研版本已经冻结，并通过当前开发机的自动化测试、浏览器验收和
+只读发布检查。v2.0.1 开源准备版本补充了 MIT 软件许可证与第三方数据许可声明。以上均为
+本机验收结果，不代表已经完成独立电脑、不同操作系统或全新环境的安装验证。
+
+- 软件许可证：[MIT License](LICENSE)
+- 第三方数据与派生材料说明：[DATA_LICENSE.md](DATA_LICENSE.md)
 
 ## 项目目标
 
@@ -21,6 +20,16 @@ RamanAI 是一个基于 Python 的拉曼光谱科研软件项目。项目以稳�
 6.  在证据充分后再讨论辅助矿物识别能力，不把相似度分数直接解释成概率或已验证的矿物身份。
 
 ## 已实现功能
+
+### V1 与 V2 的边界
+
+- **V1 单谱分析**：处理用户上传的一条 RRUFF RAW TXT 光谱，完成 SG 去噪、AsLS 基线校正、
+  最大值归一化、候选峰检测、峰特征展示和 CSV 导出；不依赖参考数据库。
+- **V2 光谱匹配**：将上传光谱按实验 9/10 固定流程处理到公共网格，并与用户本地配置的兼容
+  候选参考库进行 Top-K 余弦相似度检索，展示参考标签、证据光谱和叠加图，并导出 CSV/JSON。
+
+V2 匹配功能不会自动下载数据。用户必须自行从合法来源获取数据，遵守相应许可，并按本文说明
+配置兼容的 NPZ 缓存和索引 CSV。
 
 ### V1.0.0：稳定单谱分析
 
@@ -224,7 +233,38 @@ Sample_ID。固定分组如下：
 -   `results/exp11_development_baseline/development_label_stats_and_errors.csv`
 -   `results/exp11_development_baseline/development_baseline_summary.json`
 
-本轮已对提供的脚本和结果文件进行内部一致性复核。完整源数据、锁文件和缓存的端到端重新运行仍应由本地环境单独复现。
+上述 Development 基线、冻结身份映射和本地缓存已在当前开发机完成一致性与回归核验。
+
+### 实验 12--14：方法冻结、正式评价与 V2 交付
+
+实验 12 在查看 final-test 成绩前冻结了方法 A、数据身份、预处理、排序、指标和 Bootstrap：
+
+- 每个 `reference_label_group_key` 的分数为该标签全部冻结 Gallery 光谱的最大余弦相似度；
+- 主要指标为查询 Sample_ID 等权 Top-1，次要指标为 Top-3、Top-5；
+- Bootstrap 以 60 个查询 Sample_ID 为重抽样单位，10,000 次、种子 42，采用 linear percentile；
+- 正式入口绑定方法锁、源码锁、数据哈希、唯一 run_id 和一次性人工批准。
+
+实验 13 对冻结 final-test 只执行了一次正式评价：
+
+| 项目 | 数量 |
+|---|---:|
+| 查询光谱 | 129 |
+| 查询 Sample_ID | 60 |
+| Gallery 光谱 | 724 |
+| Gallery Sample_ID | 342 |
+| 闭集候选参考标签 | 60 |
+| 查询--Gallery 相似度配对 | 93,396 |
+
+Sample_ID 等权的参考标签检索命中率为：
+
+| 指标 | 命中率 |
+|---|---:|
+| Top-1 | 93.61% |
+| Top-3 | 98.33% |
+| Top-5 | 99.17% |
+
+这些结果是**相对于候选参考数据库标签的冻结闭集检索命中率**，不是经过独立实验验证的矿物
+识别准确率，也不能解释为概率或置信度。实验 14 完成了文档、依赖检查、回归测试和只读发布检查。
 
 ## 数据与科学解释原则
 
@@ -242,13 +282,17 @@ Sample_ID。固定分组如下：
 
 ## 环境与运行
 
-建议使用项目虚拟环境。
+当前开发机使用 Python 3.13.3。建议创建项目虚拟环境并按 `requirements.txt` 安装；其他 Python、
+Windows 或操作系统版本尚未完成独立验证。
 
 ### Windows PowerShell
 
 ``` powershell
+python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 .\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m pip check
 ```
 
 也可以不激活环境，直接运行虚拟环境解释器。
@@ -265,7 +309,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-最近一次报告的全量回归为 167 项通过；应以当前本地运行结果为准。
+当前开发机全量回归结果为 **269 项通过**。Streamlit 浏览器人工验收为 **6/6 通过**；
+`scripts/14_release_check.py` 返回 `ready_for_release=true`。这些结果仅说明当前开发机的冻结版本
+通过验收，不是独立电脑上的安装验证。
 
 ### 重跑 Development 基线（需要时）
 
@@ -274,8 +320,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
   --output-dir "results\exp11_development_baseline_manual_new"
 ```
 
-请使用新的输出目录，避免覆盖现有结果。不要为了确认结果而提前运行
-final-test。
+请使用新的输出目录，避免覆盖现有结果。冻结 final-test 已完成唯一一次正式运行，不应再次执行。
 
 ## Git 与实验产物
 
@@ -294,9 +339,26 @@ git tag --list
 中的本地输出自动视为已纳入版本控制。新增脚本、测试、冻结协议和重要文档应按项目既定
 Git 规则管理；提交、打标签和推送前先检查差异。
 
-## V2.0.0 Release Candidate
+## 许可证与发布数据边界
 
-当前工作区已具备 V2 候选功能：
+RamanAI 原创软件代码和项目有权许可的文档采用 [MIT License](LICENSE)。MIT 许可证不授予
+任何第三方数据的使用或再分发权利，详细说明见 [DATA_LICENSE.md](DATA_LICENSE.md)。
+
+以下内容不随公开代码发布：
+
+- RRUFF 原始 RAW/Processed 光谱；
+- 从第三方光谱构建的派生参考数据库；
+- 批量预处理 NPZ 缓存及配套索引 CSV；
+- 大型 `results/` 实验输出；
+- 内部冻结评价 Manifest、批准 JSON、运行审计和逐条正式评价文件。
+
+用户需要自行合法取得并配置兼容参考数据。仓库不提供未经确认许可的数据下载入口，也不保证
+用户自行构建的数据库与本项目本机科研评价库具有相同内容或检索结果。
+
+## V2.0.0 科研冻结版本与 v2.0.1 开源准备
+
+V2.0.0 科研版本已经冻结并通过本机验收；v2.0.1 在不改变冻结科研算法和正式结果的前提下，
+补充了 MIT 许可证与第三方数据许可声明。当前功能包括：
 
 - 保留 V1 中英双语单谱预处理、候选峰分析和峰特征 CSV；
 - 在同一 Streamlit 应用中提供“光谱匹配 / Spectrum Matching”；
@@ -317,13 +379,13 @@ results/exp09_batch_preprocessing_full/rruff_preprocessed_300_850_step0p5.npz
 results/exp09_batch_preprocessing_full/rruff_preprocessing_index.csv
 ```
 
-这两个文件及 RRUFF 原始数据默认不属于公开发布包。再分发许可尚未确认时，请勿将其复制到
-公开制品。缺失时应从已验收的本地实验产物恢复，并使用来源 SHA-256 和
-`scripts/14_release_check.py` 核验；不要用同名未知文件代替。
+这两个文件及 RRUFF 原始数据不属于公开代码发布包。用户必须从合法来源自行获取数据并构建
+兼容缓存；不要使用来源不明的同名文件。应用会检查缓存结构、身份映射和来源指纹，文件缺失
+或不一致时会明确报错。
 
 ### 发布状态
 
-V2 当前只能称为 **V2.0.0 Release Candidate**。冻结 final-test 已按一次性授权成功完成：
+冻结 final-test 已按一次性授权成功完成：
 60 个查询 Sample_ID 等权的参考标签 Top-1/3/5 分别为 `0.9361111111`、`0.9833333333`、
 `0.9916666667`；95% percentile Bootstrap 区间分别为 `[0.8777777778, 0.9833333333]`、
 `[0.9500000000, 1.0000000000]`、`[0.9750000000, 1.0000000000]`。这些数值仅表示相对于候选
@@ -340,12 +402,14 @@ V2 当前只能称为 **V2.0.0 Release Candidate**。冻结 final-test 已按一
   --final-output-dir "results\exp13_final_test_e99dc611-5687-4a82-aff7-2cd459dd598d"
 ```
 
-该命令不会重新运行 final-test。只有全量测试、依赖检查、只读发布检查和用户浏览器验收
-全部完成后，才可决定是否正式发布 V2.0.0。
+该命令不会重新运行 final-test。它依赖未随公开代码发布的本地冻结评价结果，以及相关 Manifest、
+批准记录和运行审计等内部文件；因此，全新克隆的公开仓库不能直接完整执行这项内部检查。公开
+仓库用户不需要也不应为此重新运行 final-test。当前开发机的全量测试、依赖检查、6/6 浏览器
+验收和只读发布检查均已通过；这些结果不等同于独立电脑安装验证。
 
 ## 当前进度与下一步
 
-截至实验 13 授权准备阶段：
+当前状态：
 
 -   实验 8：RRUFF 审计、索引和候选筛选完成。
 -   实验 9：覆盖率、采样与插值研究，以及批量预处理完成。
@@ -355,4 +419,5 @@ V2 当前只能称为 **V2.0.0 Release Candidate**。冻结 final-test 已按一
 -   实验 11.3--11.5：Development 诊断、证据解释、匹配 UI 与来源完整性保护已完成。
 -   实验 12：正式方法、Bootstrap、输入与可执行候选锁已准备。
 -   实验 13：唯一一次冻结 final-test 已成功完成，禁止再次运行。
--   实验 14：V2 发布文档和只读发布检查已完成，仍需用户浏览器验收。
+-   实验 14：V2 发布文档、依赖检查、只读发布检查和本机 6/6 浏览器验收已完成。
+-   v2.0.1：已增加 MIT 许可证和第三方数据许可声明。
