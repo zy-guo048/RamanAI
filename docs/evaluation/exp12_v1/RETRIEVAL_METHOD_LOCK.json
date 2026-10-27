@@ -1,0 +1,326 @@
+{
+  "schema": "ramanai_final_evaluation_method_lock_draft_v1",
+  "experiment": "12-A",
+  "created_date": "2026-10-27",
+  "document_status": "frozen_candidate_pending_external_human_approval",
+  "approval": {
+    "method_configuration": "frozen_candidate_pending_external_human_approval",
+    "bootstrap_configuration": "frozen_candidate_pending_external_human_approval",
+    "executable_source_lock": "frozen_candidate_pending_external_human_approval",
+    "final_test_execution": "requires_valid_experiment_13_single_run_approval_record",
+    "approved_by": null,
+    "approved_at": null
+  },
+  "method": {
+    "method_id": "A_max_spectrum_cosine",
+    "method_selection_closed": true,
+    "method_b_allowed": false,
+    "new_aggregation_parameter_search_allowed": false,
+    "query_preprocessing_source": "frozen_experiment_9_3_npz_vectors",
+    "preprocessing_lineage": [
+      {
+        "step": 1,
+        "operation": "v1_compatible_parse"
+      },
+      {
+        "step": 2,
+        "operation": "savitzky_golay",
+        "window_length_points": 21,
+        "polyorder": 3
+      },
+      {
+        "step": 3,
+        "operation": "asls_baseline_correction",
+        "lambda": 1000000.0,
+        "p": 0.01
+      },
+      {
+        "step": 4,
+        "operation": "max_normalization",
+        "axis_stage": "original_valid_wavenumber_axis_after_asls"
+      },
+      {
+        "step": 5,
+        "operation": "linear_interpolation",
+        "extrapolation_allowed": false,
+        "zero_fill_allowed": false
+      }
+    ],
+    "grid": {
+      "start_cm_1": 300.0,
+      "end_cm_1": 850.0,
+      "step_cm_1": 0.5,
+      "point_count": 1101,
+      "scientific_status": "frozen_engineering_evaluation_grid_not_claimed_globally_optimal"
+    },
+    "similarity": {
+      "name": "cosine_similarity",
+      "formula": "dot(reference,query)/(l2_norm(reference)*l2_norm(query))",
+      "negative_values_allowed": true,
+      "zero_norm_allowed": false,
+      "nonfinite_allowed": false,
+      "boundary_roundoff_tolerance": 1e-12,
+      "material_out_of_range_action": "fail"
+    },
+    "reference_label_identity": {
+      "source_field": "reference_label",
+      "unicode_normalization": "NFKC",
+      "trim_outer_whitespace": true,
+      "collapse_internal_whitespace": true,
+      "group_key": "reference_label:<normalized_label.casefold()>",
+      "synonym_merging": false,
+      "manual_alias_mapping": false
+    },
+    "label_scoring": {
+      "scope": "all_eligible_frozen_gallery_spectra_before_any_file_top_k_truncation",
+      "score": "maximum_cosine_similarity",
+      "support_evidence": "gallery_file_producing_the_maximum",
+      "score_interpretation": "ranking_score_not_probability_confidence_or_accuracy"
+    },
+    "deterministic_sort": {
+      "file_sort_keys": [
+        "-cosine_similarity",
+        "relative_path.casefold()",
+        "relative_path"
+      ],
+      "label_sort_keys": [
+        "-label_score",
+        "reference_label_group_display.casefold()",
+        "reference_label_group_key",
+        "best_support_relative_path.casefold()",
+        "best_support_relative_path"
+      ],
+      "random_tie_breaking": false
+    }
+  },
+  "frozen_evaluation_data": {
+    "gallery": {
+      "evaluation_group": "reference_gallery",
+      "record_count": 724,
+      "known_sample_id_count": 342,
+      "reference_label_count": 60
+    },
+    "development": {
+      "evaluation_group": "development_query",
+      "record_count": 118,
+      "known_sample_id_count": 60,
+      "reference_label_count": 60
+    },
+    "final_test": {
+      "evaluation_group": "final_test_query",
+      "record_count": 129,
+      "known_sample_id_count": 60,
+      "reference_label_count": 60,
+      "identity_sha256": "d94b630e4cf60ffb532583b52c78997e4276faa743752f1ba974bc30258fde2c",
+      "identity_hash_fields": [
+        "sample_id",
+        "evaluation_group",
+        "relative_path",
+        "reference_label_group_key"
+      ],
+      "identity_hash_serialization": "sorted UTF-8 lines joined by LF; fields joined by |",
+      "experiment_12_similarity_calculation_allowed": false,
+      "experiment_12_prediction_allowed": false
+    },
+    "formal_gallery_must_not_use_application_library_count": 5529,
+    "isolation": {
+      "type": "logical_row_isolation_within_monolithic_npz",
+      "physical_file_isolation": false,
+      "required_query_selection_basis": "frozen_manifest_cache_row_index_after_group_and_identity_validation"
+    }
+  },
+  "metrics": {
+    "comparison_identity": "reference_label_group_key",
+    "top_k_values": [
+      1,
+      3,
+      5
+    ],
+    "primary": {
+      "result_level": "reference_label",
+      "k": 1,
+      "aggregation": "query_sample_id_equal_weight"
+    },
+    "secondary": [
+      {
+        "result_level": "reference_label",
+        "k": 3,
+        "aggregation": "query_sample_id_equal_weight"
+      },
+      {
+        "result_level": "reference_label",
+        "k": 5,
+        "aggregation": "query_sample_id_equal_weight"
+      }
+    ],
+    "record_hit_definition": "correct reference_label_group_key appears within first K ranked labels",
+    "within_sample_id_aggregation": "arithmetic_mean_of_record_hit_indicators",
+    "across_sample_id_aggregation": "arithmetic_mean_of_60_sample_id_level_hit_fractions",
+    "label_macro_average": {
+      "required": true,
+      "expected_equal_to_sample_id_equal_weight": true,
+      "reason": "exactly one final-test Sample_ID per strict closed-set reference label",
+      "mismatch_action": "fail_and_investigate"
+    },
+    "supplementary_outputs": [
+      "129_query_record_top_k",
+      "correct_label_full_rank",
+      "confusion_pairs",
+      "error_cases"
+    ]
+  },
+  "bootstrap": {
+    "applies_to": [
+      "sample_id_equal_reference_label_top_1",
+      "sample_id_equal_reference_label_top_3",
+      "sample_id_equal_reference_label_top_5"
+    ],
+    "resampling_unit": "query_sample_id",
+    "unit_count": 60,
+    "draws_per_replicate": 60,
+    "with_replacement": true,
+    "replicate_count": 10000,
+    "random_seed": 42,
+    "interval": "two_sided_95_percentile",
+    "lower_percentile": 2.5,
+    "upper_percentile": 97.5,
+    "sample_value": "precomputed_within_sample_id_hit_fraction",
+    "split_repeated_measurements": false,
+    "quantile_function": "numpy.quantile",
+    "quantile_method": "linear",
+    "shared_draw_indices_across_top_k": true,
+    "percentile_implementation": "np.quantile(replicate_metrics, [0.025, 0.975], axis=0, method=\"linear\")",
+    "interpretation": "exploratory conditional resampling description for the 60 preselected labels and one final-test Sample_ID per label"
+  },
+  "confirmed_inputs": {
+    "evaluation_manifest": {
+      "path": "docs/evaluation/exp11_v1/evaluation_group_manifest.csv",
+      "size_bytes": 4298775,
+      "sha256": "1467911decc715ed2ab6a4c5214e4ecb170db4b10d7c89a1c2d8dc438ac9aeee"
+    },
+    "evaluation_protocol": {
+      "path": "docs/evaluation/exp11_v1/EVALUATION_PROTOCOL.md",
+      "size_bytes": 3894,
+      "sha256": "9fb3d74fa25dc58532b105075ccb0feba6ca6c6baabfc15c3f89a5b1c4474b74"
+    },
+    "evaluation_group_audit": {
+      "path": "docs/evaluation/exp11_v1/evaluation_group_audit.json",
+      "size_bytes": 3892,
+      "sha256": "dd9537e220594599d1563163e96d069b9f95e4cedab2f412b17e181103a34551"
+    },
+    "reference_label_sample_distribution": {
+      "path": "docs/evaluation/exp11_v1/reference_label_sample_distribution.csv",
+      "size_bytes": 494506,
+      "sha256": "3fa9973c0d196ea3c6be76406ccbbd37868fa2332f524f584b54682b250c414b"
+    },
+    "experiment_11_data_source_lock": {
+      "path": "docs/evaluation/exp11_v1/DATA_SOURCE_LOCK.json",
+      "size_bytes": 2184,
+      "sha256": "6b1945fe7648ade97134c4d218a18ab5fa73d6d1b1d424e8666aa077df8ba6fe"
+    },
+    "experiment_9_3_npz": {
+      "path": "results/exp09_batch_preprocessing_full/rruff_preprocessed_300_850_step0p5.npz",
+      "size_bytes": 47361646,
+      "sha256": "8ad10760593498ef8b256c44571165eab1ed73987e90db587f0b26088de65610",
+      "allow_pickle": false
+    },
+    "experiment_9_3_index": {
+      "path": "results/exp09_batch_preprocessing_full/rruff_preprocessing_index.csv",
+      "size_bytes": 4638557,
+      "sha256": "6f3f64884fe653dc32143f7a495a0a457d0b3b4a15a6b5dab57f58ae26b61a87"
+    },
+    "all_group_identity_sha256": "07f1b4090427280664f684350014b6564a8a83218d776bb30bbeae74738e8f6a"
+  },
+  "source_inventory_observed_in_exp12_a": {
+    "status": "informational_only_not_the_final_executable_lock",
+    "warning": "These files may be extended or wrapped in experiment 12-B. Their current hashes must not be presented as the approved final executable source lock.",
+    "files": [
+      {
+        "role": "cached_preprocessing_provenance",
+        "path": "scripts/09_batch_preprocess_rruff.py",
+        "size_bytes": 31625,
+        "observed_sha256": "5de995603d1331239a8c64b070d5069949db64f9a1129ea8c222731950b732fa"
+      },
+      {
+        "role": "no_extrapolation_interpolation_provenance",
+        "path": "scripts/09_validate_interpolation.py",
+        "size_bytes": 34666,
+        "observed_sha256": "35b9f34e8508c4e2f037a7675cc4f1e252ad02a0c3e1fa22322c17fa90adbb89"
+      },
+      {
+        "role": "cosine_label_identity_and_deterministic_ranking",
+        "path": "scripts/10_search_rruff_topk.py",
+        "size_bytes": 45785,
+        "observed_sha256": "e6b953734deaf3b578359ff0b7b9df54f7843ad452b04c44f3c2aaf9dfe30b97"
+      },
+      {
+        "role": "frozen_group_identity_definition",
+        "path": "scripts/11_build_evaluation_protocol.py",
+        "size_bytes": 39316,
+        "observed_sha256": "51f54192febe6ef4bd4aad22e85871d4663a56c3f719076f4baa01dc6d92fd83"
+      },
+      {
+        "role": "development_metric_and_mapping_reference",
+        "path": "scripts/11_evaluate_development_topk.py",
+        "size_bytes": 35874,
+        "observed_sha256": "dffc0a77b9ca7608fdda48d67eb84d95782a3d3db9aec94959b65f7b87876f23"
+      },
+      {
+        "role": "development_method_a_b_comparison_reference",
+        "path": "scripts/11_compare_reference_label_aggregation.py",
+        "size_bytes": 33829,
+        "observed_sha256": "40003c107e561c07046760d502acc4259a9a7035f89464a8f0005590fab95f05"
+      },
+      {
+        "role": "v1_compatible_parser_provenance",
+        "path": "raman_app/upload.py",
+        "size_bytes": 1996,
+        "observed_sha256": "1671ac2e8570cda0d28433d2503bb19555f9869ab00e3a1cd809aab66c0bbfe4"
+      },
+      {
+        "role": "sg_asls_and_normalization_provenance",
+        "path": "scripts/raman_utils.py",
+        "size_bytes": 4866,
+        "observed_sha256": "9f92c519d12ab490117c7055392308440cd776238d4926666768bb1c603115b5"
+      }
+    ]
+  },
+  "experiment_12_b_requirements": {
+    "must_freeze_executable_hashes_after_implementation": true,
+    "required_components": [
+      "method_lock_schema_validation",
+      "data_lock_and_file_hash_preflight",
+      "manifest_group_count_and_identity_validation",
+      "gallery_development_final_leakage_validation",
+      "npz_index_manifest_row_mapping_validation",
+      "method_a_complete_label_ranking",
+      "sample_id_equal_metric_aggregation",
+      "label_macro_consistency_check",
+      "deterministic_10000_replicate_sample_id_bootstrap",
+      "no_overwrite_output_transaction",
+      "attempt_audit_log",
+      "explicit_final_test_approval_gate",
+      "thin_experiment_13_entrypoint"
+    ],
+    "test_data_policy": "synthetic_and_development_only",
+    "final_test_similarity_in_experiment_12": 0,
+    "final_test_prediction_in_experiment_12": 0
+  },
+  "execution_policy": {
+    "policy_path": "docs/evaluation/exp12_v1/FINAL_TEST_EXECUTION_POLICY.md",
+    "first_formal_run_requires_explicit_user_approval": true,
+    "output_overwrite_allowed": false,
+    "technical_failures_must_be_audited": true,
+    "existing_partial_outputs_must_be_preserved": true,
+    "post_result_parameter_tuning_allowed": false,
+    "post_result_gallery_change_allowed": false,
+    "post_result_algorithm_reselection_allowed": false,
+    "post_result_adverse_sample_deletion_allowed": false
+  },
+  "scientific_interpretation": {
+    "reference_label_status": "candidate_database_reference_label_not_independently_validated_ground_truth",
+    "reported_metric_name": "retrieval_hit_rate_relative_to_current_candidate_database_reference_labels",
+    "cosine_is_probability": false,
+    "bootstrap_is_external_generalization_guarantee": false
+  }
+}

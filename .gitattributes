@@ -1,0 +1,15 @@
+# RamanAI frozen evaluation sources: preserve exact LF line endings
+/raman_app/final_evaluation.py text eol=lf
+/scripts/10_search_rruff_topk.py text eol=lf
+/scripts/11_evaluate_development_topk.py text eol=lf
+/scripts/11_build_evaluation_protocol.py text eol=lf
+/scripts/12_prepare_final_evaluation.py text eol=lf
+/scripts/13_evaluate_final_test.py text eol=lf
+
+# Frozen evaluation manifests, configurations and audit records
+/docs/evaluation/exp11_v1/*.json text eol=lf
+/docs/evaluation/exp11_v1/*.md text eol=lf
+/docs/evaluation/exp11_v1/*.csv text eol=lf
+/docs/evaluation/exp12_v1/*.json text eol=lf
+/docs/evaluation/exp12_v1/*.md text eol=lf
+/docs/evaluation/exp13_v1/*.json text eol=lf

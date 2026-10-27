@@ -1,0 +1,53 @@
+{
+  "experiment": "11.2",
+  "schema_version": 1,
+  "evaluation_snapshot": {
+    "EVALUATION_PROTOCOL.md": {
+      "path": "docs/evaluation/exp11_v1/EVALUATION_PROTOCOL.md",
+      "sha256": "9fb3d74fa25dc58532b105075ccb0feba6ca6c6baabfc15c3f89a5b1c4474b74",
+      "size_bytes": 3894
+    },
+    "evaluation_group_audit.json": {
+      "path": "docs/evaluation/exp11_v1/evaluation_group_audit.json",
+      "sha256": "dd9537e220594599d1563163e96d069b9f95e4cedab2f412b17e181103a34551",
+      "size_bytes": 3892
+    },
+    "evaluation_group_manifest.csv": {
+      "path": "docs/evaluation/exp11_v1/evaluation_group_manifest.csv",
+      "sha256": "1467911decc715ed2ab6a4c5214e4ecb170db4b10d7c89a1c2d8dc438ac9aeee",
+      "size_bytes": 4298775
+    },
+    "reference_label_sample_distribution.csv": {
+      "path": "docs/evaluation/exp11_v1/reference_label_sample_distribution.csv",
+      "sha256": "3fa9973c0d196ea3c6be76406ccbbd37868fa2332f524f584b54682b250c414b",
+      "size_bytes": 494506
+    }
+  },
+  "frozen_evaluation": {
+    "all_group_identity_sha256": "07f1b4090427280664f684350014b6564a8a83218d776bb30bbeae74738e8f6a",
+    "expected_counts": {
+      "development_query_known_sample_ids": 60,
+      "development_query_records": 118,
+      "final_test_query_known_sample_ids": 60,
+      "final_test_query_records": 129,
+      "reference_gallery_known_sample_ids": 342,
+      "reference_gallery_records": 724,
+      "strict_closed_set_reference_labels": 60
+    },
+    "final_test_identity_sha256": "d94b630e4cf60ffb532583b52c78997e4276faa743752f1ba974bc30258fde2c",
+    "manifest_sha256": "1467911decc715ed2ab6a4c5214e4ecb170db4b10d7c89a1c2d8dc438ac9aeee",
+    "split_seed": 42
+  },
+  "source_data": {
+    "experiment_9_3_index": {
+      "path": "results/exp09_batch_preprocessing_full/rruff_preprocessing_index.csv",
+      "sha256": "6f3f64884fe653dc32143f7a495a0a457d0b3b4a15a6b5dab57f58ae26b61a87",
+      "size_bytes": 4638557
+    },
+    "experiment_9_3_npz": {
+      "path": "results/exp09_batch_preprocessing_full/rruff_preprocessed_300_850_step0p5.npz",
+      "sha256": "8ad10760593498ef8b256c44571165eab1ed73987e90db587f0b26088de65610",
+      "size_bytes": 47361646
+    }
+  }
+}

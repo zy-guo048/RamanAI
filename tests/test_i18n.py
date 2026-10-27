@@ -102,6 +102,7 @@ class InternationalizationTests(unittest.TestCase):
             app.LANGUAGE_SELECTOR_STATE_KEY: "en",
             app.ANALYSIS_RESULT_STATE_KEY: analysis_result,
             app.ANALYSIS_REQUEST_STATE_KEY: request_key,
+            app.MAIN_VIEW_STATE_KEY: translate("zh_CN", "matching_view"),
             "peak_prominence": 1000.0,
             "spectrum_upload": object(),
         }
@@ -123,6 +124,10 @@ class InternationalizationTests(unittest.TestCase):
         )
         self.assertEqual(session_state["peak_prominence"], 1000.0)
         self.assertIn("spectrum_upload", session_state)
+        self.assertEqual(
+            session_state[app.MAIN_VIEW_STATE_KEY],
+            translate("en", "matching_view"),
+        )
         mocked_rerun.assert_called_once_with(scope="app")
 
     def test_language_does_not_change_scientific_results(self):

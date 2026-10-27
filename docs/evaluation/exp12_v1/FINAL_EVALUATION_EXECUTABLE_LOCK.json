@@ -1,0 +1,249 @@
+{
+  "schema": "ramanai_final_evaluation_executable_lock_v1",
+  "experiment": "12-B",
+  "created_date": "2026-10-27",
+  "last_protection_revision": "experiment_13_a_pending_human_approval",
+  "lock_status": "frozen_candidate_pending_human_approval",
+  "self_hash_excluded": true,
+  "approval_record_generated": false,
+  "final_test_execution_authorized": false,
+  "method": {
+    "method_id": "A_max_spectrum_cosine",
+    "formal_result_level": "reference_label",
+    "formal_top_k_values": [
+      1,
+      3,
+      5
+    ],
+    "sample_id_equal_weighting": true,
+    "label_macro_average": true,
+    "method_b_allowed": false,
+    "new_parameter_search_allowed": false
+  },
+  "method_lock": {
+    "path": "docs/evaluation/exp12_v1/RETRIEVAL_METHOD_LOCK.json",
+    "size_bytes": 12426,
+    "sha256": "2bccf0553debc38e6e4e425dce19f9a9bfc6f1d4c47104181b6dbb8dcb4f8c5a",
+    "document_status": "frozen_candidate_pending_external_human_approval",
+    "approval_status": "frozen_candidate_pending_external_human_approval"
+  },
+  "executable_sources": [
+    {
+      "role": "shared_frozen_evaluation_core",
+      "path": "raman_app/final_evaluation.py",
+      "size_bytes": 59990,
+      "sha256": "8d173c4be1af83eea33354e9b65f307a509b8f39b30a6dcc9a9328db836244b7"
+    },
+    {
+      "role": "development_preflight_entrypoint",
+      "path": "scripts/12_prepare_final_evaluation.py",
+      "size_bytes": 3956,
+      "sha256": "5663ca456f3b328fab136543a651feb095d8320f21d6afa29b6816a5b99c7b86"
+    },
+    {
+      "role": "sealed_formal_final_test_entrypoint",
+      "path": "scripts/13_evaluate_final_test.py",
+      "size_bytes": 8146,
+      "sha256": "103811e6565a29399b35d092826673193c3543eab32be229bf5ae07ba307867a"
+    },
+    {
+      "role": "cosine_similarity_label_identity_and_deterministic_ranking",
+      "path": "scripts/10_search_rruff_topk.py",
+      "size_bytes": 45785,
+      "sha256": "e6b953734deaf3b578359ff0b7b9df54f7843ad452b04c44f3c2aaf9dfe30b97"
+    },
+    {
+      "role": "frozen_input_mapping_and_development_metric_reference",
+      "path": "scripts/11_evaluate_development_topk.py",
+      "size_bytes": 35874,
+      "sha256": "dffc0a77b9ca7608fdda48d67eb84d95782a3d3db9aec94959b65f7b87876f23"
+    },
+    {
+      "role": "frozen_group_identity_and_leakage_rules",
+      "path": "scripts/11_build_evaluation_protocol.py",
+      "size_bytes": 39316,
+      "sha256": "51f54192febe6ef4bd4aad22e85871d4663a56c3f719076f4baa01dc6d92fd83"
+    }
+  ],
+  "verification_sources": [
+    {
+      "role": "experiment_12_b_specialized_tests",
+      "path": "tests/test_final_evaluation_preflight.py",
+      "size_bytes": 32211,
+      "sha256": "d65dd9b66676e3ff479ed035d1bb2b96cf2144bb5c1dc5ffb8e42006d3c246e9"
+    },
+    {
+      "role": "formal_execution_policy",
+      "path": "docs/evaluation/exp12_v1/FINAL_TEST_EXECUTION_POLICY.md",
+      "size_bytes": 10407,
+      "sha256": "1898a6fe5472a6d1787648acbce044fcb4c686404556731583ec3f97c5c726a1"
+    }
+  ],
+  "frozen_inputs": {
+    "experiment_11_data_source_lock": {
+      "path": "docs/evaluation/exp11_v1/DATA_SOURCE_LOCK.json",
+      "size_bytes": 2184,
+      "sha256": "6b1945fe7648ade97134c4d218a18ab5fa73d6d1b1d424e8666aa077df8ba6fe"
+    },
+    "evaluation_manifest_sha256": "1467911decc715ed2ab6a4c5214e4ecb170db4b10d7c89a1c2d8dc438ac9aeee",
+    "experiment_9_3_npz_sha256": "8ad10760593498ef8b256c44571165eab1ed73987e90db587f0b26088de65610",
+    "experiment_9_3_index_sha256": "6f3f64884fe653dc32143f7a495a0a457d0b3b4a15a6b5dab57f58ae26b61a87",
+    "all_group_identity_sha256": "07f1b4090427280664f684350014b6564a8a83218d776bb30bbeae74738e8f6a",
+    "final_test_identity_sha256": "d94b630e4cf60ffb532583b52c78997e4276faa743752f1ba974bc30258fde2c",
+    "gallery_record_count": 724,
+    "gallery_known_sample_id_count": 342,
+    "development_record_count": 118,
+    "development_known_sample_id_count": 60,
+    "final_test_record_count": 129,
+    "final_test_known_sample_id_count": 60,
+    "strict_reference_label_count": 60
+  },
+  "bootstrap": {
+    "resampling_unit": "query_sample_id",
+    "unit_count": 60,
+    "draws_per_replicate": 60,
+    "replicate_count": 10000,
+    "random_seed": 42,
+    "generator": "numpy.random.default_rng(42)",
+    "shared_draw_indices_across_top_k": true,
+    "quantile_function": "numpy.quantile",
+    "quantiles": [
+      0.025,
+      0.975
+    ],
+    "quantile_method": "linear",
+    "development_sample_id_order_sha256": "fe651f14143f4a7e0b950f9bd9ef6ad64796c64cc825a82e72b8f4c16a64aa37",
+    "development_draw_indices_sha256": "f3d02c0f6d80923a3ed304a19cffbae87e098d412ab24b61ca0b231b6c7f899c"
+  },
+  "development_preflight": {
+    "output_directory": "results/exp12_final_evaluation_preflight_v2",
+    "preflight_summary": {
+      "path": "results/exp12_final_evaluation_preflight_v2/preflight_summary.json",
+      "size_bytes": 3929,
+      "sha256": "94fbc5933bb8aea41d745673a4f74b16e07ff507044c61bea628ebdc796ca2c9"
+    },
+    "run_audit": {
+      "path": "results/exp12_final_evaluation_preflight_v2/RUN_AUDIT.json",
+      "size_bytes": 962,
+      "sha256": "4f81dc8b569813b9ddc911021d811a1c67ffc4f12a771be208d530b68d234050"
+    },
+    "bootstrap_validation": {
+      "path": "results/exp12_final_evaluation_preflight_v2/bootstrap_validation.json",
+      "size_bytes": 1900,
+      "sha256": "765cf1160b7cd00374002407b8730f80e3caccab191652c0c56fbf2a57630c0a"
+    },
+    "frozen_input_audit": {
+      "path": "results/exp12_final_evaluation_preflight_v2/frozen_input_audit.json",
+      "size_bytes": 3441,
+      "sha256": "aa090fd9ccbc9f2e94830b368cbd897e6a0b33d312ab8f2bcc181df557cc43aa"
+    },
+    "sample_equal_metrics": {
+      "top_1": 0.8805555555555554,
+      "top_3": 0.95,
+      "top_5": 0.9666666666666667
+    },
+    "bootstrap_95_percentile_intervals": {
+      "top_1": [
+        0.7972222222222223,
+        0.9527777777777777
+      ],
+      "top_3": [
+        0.8833333333333333,
+        1.0
+      ],
+      "top_5": [
+        0.9166666666666666,
+        1.0
+      ]
+    },
+    "baseline_absolute_tolerance": 1e-12,
+    "experiment_11_2_query_identity_match": true,
+    "experiment_11_2_complete_rank_match": true,
+    "final_test_vector_selection_count": 0,
+    "final_test_similarity_row_count": 0,
+    "final_test_prediction_count": 0,
+    "final_test_score_count": 0
+  },
+  "runtime_environment": {
+    "python_implementation": "CPython",
+    "python_version": "3.13.3",
+    "numpy_version": "2.5.4",
+    "scipy_version": "1.18.1",
+    "ramanspy_version": "0.2.10",
+    "npz_allow_pickle": false
+  },
+  "verification_results": {
+    "specialized_test_count": 18,
+    "specialized_tests_passed": 18,
+    "full_regression_test_count": 269,
+    "full_regression_tests_passed": 269,
+    "py_compile": "passed",
+    "development_baseline_reproduced": true,
+    "final_test_was_executed": false
+  },
+  "formal_entrypoint": {
+    "path": "scripts/13_evaluate_final_test.py",
+    "implementation_status": "frozen_candidate_sealed_pending_external_human_approval",
+    "explicit_cli_flag": "--execute-frozen-final-test",
+    "approval_record_required": true,
+    "output_directory_must_not_exist": true,
+    "approval_checked_before_frozen_input_loading": true,
+    "approval_checked_before_final_test_vector_selection": true,
+    "approval_record_must_not_be_generated_automatically": true
+  },
+  "execution_protection": {
+    "run_id_format": "canonical_lowercase_uuid",
+    "persistent_attempt_audit": "final_test_attempt_audits/<run_id>.json",
+    "attempt_audit_created_before_authorization": true,
+    "started_run_id_reuse_forbidden": true,
+    "technical_retry_requires_new_human_approval": true,
+    "runtime_versions_checked_before_vector_selection": [
+      "python_version",
+      "numpy_version",
+      "scipy_version"
+    ],
+    "approval_required_bindings": [
+      "method_lock_sha256",
+      "executable_lock_sha256",
+      "final_test_identity_sha256",
+      "npz_sha256",
+      "index_sha256",
+      "evaluation_manifest_sha256",
+      "data_source_lock_sha256",
+      "output_dir",
+      "run_id"
+    ],
+    "formal_counter_fields": [
+      "final_test_query_row_count",
+      "gallery_reference_row_count",
+      "similarity_pair_count",
+      "prediction_count"
+    ],
+    "expected_formal_counts": {
+      "final_test_query_row_count": 129,
+      "gallery_reference_row_count": 724,
+      "similarity_pair_count": 93396,
+      "prediction_count": 129
+    }
+  },
+  "approval_transition_policy": {
+    "current_state": "frozen_candidate_pending_external_human_approval",
+    "automatic_approval_forbidden": true,
+    "required_before_first_formal_run": [
+      "human_review_of_method_lock",
+      "human_review_of_executable_source_lock",
+      "final_candidate_lock_hashes_reverified_without_mutation",
+      "one_time_approval_record_created_by_an_authorized_human",
+      "explicit_cli_formal_mode",
+      "new_output_directory"
+    ],
+    "source_change_action": "invalidate_lock_and_repeat_review",
+    "formal_entrypoint_change_action": "invalidate_lock_and_repeat_review"
+  },
+  "scientific_interpretation": {
+    "reference_labels_are_independently_validated_ground_truth": false,
+    "cosine_similarity_is_probability_or_confidence": false,
+    "reported_metric_name": "retrieval_hit_rate_relative_to_current_candidate_database_reference_labels",
+    "bootstrap_is_external_generalization_guarantee": false
+  }
+}

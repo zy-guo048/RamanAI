@@ -12,6 +12,9 @@ TRANSLATIONS = {
     "zh_CN": {
         "app_title": "RamanAI — 智能拉曼光谱分析系统",
         "app_caption": "上传单条 RRUFF RAW TXT 光谱，使用固定预处理参数和可调突出度进行分析。",
+        "view_selector": "功能",
+        "analysis_view": "光谱分析",
+        "matching_view": "光谱匹配",
         "settings": "⚙️ 设置 / Settings",
         "language": "界面语言",
         "language_note": "选择后立即切换界面语言，不会重新计算当前光谱。",
@@ -86,10 +89,64 @@ TRANSLATIONS = {
         "error_prominence_finite": "prominence 必须是有限数值。",
         "error_prominence_negative": "prominence 不能为负数。",
         "error_max_intensity": "光谱最大强度必须大于 0。",
+        "matching_caption": "上传 RAW 光谱，在固定工程网格上检索数据库候选参考标签。",
+        "matching_upload": "上传待匹配的 RRUFF RAW 光谱",
+        "matching_upload_help": "使用与光谱分析相同的 TXT 格式；原始波数必须完整覆盖 300–850 cm⁻¹。",
+        "matching_top_k": "候选参考标签数量",
+        "start_matching": "开始匹配",
+        "matching_select_prompt": "请选择一个 .txt RAW 光谱文件，然后点击“开始匹配”。",
+        "matching_selected_file": "待匹配文件：`{filename}`",
+        "matching_running": "正在验证参考库、预处理并检索光谱……",
+        "matching_input_error_title": "无法完成光谱匹配",
+        "matching_internal_error_title": "检索内部错误",
+        "matching_internal_error_message": "检索过程中发生内部错误，详细信息已记录到服务器日志。",
+        "matching_complete": "光谱匹配完成。",
+        "matching_reference_library": "应用参考光谱数",
+        "matching_candidates": "数据库候选参考标签",
+        "matching_candidate_table_alt": "按余弦相似度排序的数据库候选参考标签",
+        "matching_downloads": "导出本次匹配结果",
+        "download_matching_csv": "下载候选结果 CSV",
+        "download_matching_json": "下载检索记录 JSON",
+        "matching_download_note": "导出内容直接来自当前显示结果；下载不会重新加载参考库或重新执行检索。",
+        "match_rank": "排名",
+        "reference_label": "候选参考标签",
+        "cosine_similarity": "余弦相似度",
+        "reference_file_count": "参考文件数",
+        "distinct_identity_count": "可区分参考身份数",
+        "best_reference_file": "最佳支持参考文件",
+        "best_sample_id": "最佳支持 Sample_ID",
+        "excitation_wavelength": "激发波长 (nm)",
+        "identity_score_gap": "最佳与第二佳参考身份分数差",
+        "not_available": "不可用",
+        "support_evidence": "支持参考身份与证据文件",
+        "support_rank": "证据排名",
+        "support_score": "身份最高余弦相似度",
+        "support_file_count": "该身份参考文件数",
+        "identity_basis": "身份分组依据",
+        "matching_plot_section": "查询光谱与 Top-1 参考光谱",
+        "matching_plot_alt": "检索预处理后的查询光谱、Top-1参考光谱及叠加比较",
+        "query_spectrum_label": "上传查询光谱",
+        "reference_spectrum_label": "Top-1 最佳参考光谱",
+        "query_processed_title": "查询光谱（检索预处理后）",
+        "reference_processed_title": "Top-1 最佳参考光谱",
+        "overlay_title": "查询谱与参考谱叠加",
+        "matching_intensity_axis": "原始轴 max 归一化后强度",
+        "matching_parameters": "固定检索预处理配置",
+        "matching_parameter_flow": "V1 解析 → SG(21,3) → AsLS(lam=1e6,p=0.01) → 原始轴 max 归一化 → 线性插值",
+        "matching_grid": "工程试验网格：300–850 cm⁻¹，步长 0.5 cm⁻¹，共 1,101 点；禁止外推。",
+        "matching_scientific_note": "余弦相似度和身份分数差不是概率、置信度或识别准确率；结果只是数据库候选参考标签，未经过独立矿物学验证。",
+        "matching_application_library_note": "该页面使用实验 10 的应用参考库，与冻结评价协议中的 724 条 Gallery 分开；交互结果不属于正式评价指标。",
+        "matching_error_band": "上传光谱没有完整覆盖 300–850 cm⁻¹，无法在禁止外推的条件下进行匹配。",
+        "matching_error_cache": "检索缓存或索引不可用，或二者身份映射验证失败。请检查实验 9.3 全量缓存。",
+        "matching_error_preprocessing": "上传光谱未能通过固定检索预处理流程。请检查光谱数据及有效强度范围。",
+        "matching_error_generic": "无法使用该文件完成匹配，请检查输入格式和检索数据。",
     },
     "en": {
         "app_title": "RamanAI — Intelligent Raman spectrum analysis system",
         "app_caption": "Upload one RRUFF RAW TXT spectrum for analysis with fixed preprocessing parameters and adjustable prominence.",
+        "view_selector": "Feature",
+        "analysis_view": "Spectrum analysis",
+        "matching_view": "Spectrum matching",
         "settings": "⚙️ 设置 / Settings",
         "language": "Interface language",
         "language_note": "The interface switches immediately without recalculating the current spectrum.",
@@ -164,6 +221,57 @@ TRANSLATIONS = {
         "error_prominence_finite": "prominence must be a finite value.",
         "error_prominence_negative": "prominence cannot be negative.",
         "error_max_intensity": "The maximum spectrum intensity must be greater than 0.",
+        "matching_caption": "Upload a RAW spectrum and retrieve candidate database reference labels on the fixed engineering grid.",
+        "matching_upload": "Upload a RRUFF RAW spectrum to match",
+        "matching_upload_help": "Uses the same TXT format as spectrum analysis; the original axis must fully cover 300–850 cm⁻¹.",
+        "matching_top_k": "Number of candidate reference labels",
+        "start_matching": "Start matching",
+        "matching_select_prompt": "Select a .txt RAW spectrum file, then click “Start matching.”",
+        "matching_selected_file": "File to match: `{filename}`",
+        "matching_running": "Validating the reference library, preprocessing, and retrieving spectra…",
+        "matching_input_error_title": "Unable to complete spectrum matching",
+        "matching_internal_error_title": "Internal retrieval error",
+        "matching_internal_error_message": "An internal error occurred during retrieval. Details were recorded in the server log.",
+        "matching_complete": "Spectrum matching completed.",
+        "matching_reference_library": "Application reference spectra",
+        "matching_candidates": "Candidate database reference labels",
+        "matching_candidate_table_alt": "Candidate database reference labels ranked by cosine similarity",
+        "matching_downloads": "Export this matching result",
+        "download_matching_csv": "Download candidate results CSV",
+        "download_matching_json": "Download retrieval record JSON",
+        "matching_download_note": "Exports are generated directly from the displayed result; downloading does not reload the reference library or rerun retrieval.",
+        "match_rank": "Rank",
+        "reference_label": "Candidate reference label",
+        "cosine_similarity": "Cosine similarity",
+        "reference_file_count": "Reference files",
+        "distinct_identity_count": "Distinguishable reference identities",
+        "best_reference_file": "Best supporting reference file",
+        "best_sample_id": "Best supporting Sample_ID",
+        "excitation_wavelength": "Excitation wavelength (nm)",
+        "identity_score_gap": "Best-minus-second reference identity score",
+        "not_available": "Not available",
+        "support_evidence": "Supporting reference identities and evidence files",
+        "support_rank": "Evidence rank",
+        "support_score": "Identity maximum cosine similarity",
+        "support_file_count": "Reference files for identity",
+        "identity_basis": "Identity grouping basis",
+        "matching_plot_section": "Query and Top-1 reference spectra",
+        "matching_plot_alt": "Retrieval-preprocessed query spectrum, Top-1 reference spectrum, and overlay",
+        "query_spectrum_label": "Uploaded query spectrum",
+        "reference_spectrum_label": "Top-1 best reference spectrum",
+        "query_processed_title": "Query spectrum after retrieval preprocessing",
+        "reference_processed_title": "Top-1 best reference spectrum",
+        "overlay_title": "Query and reference overlay",
+        "matching_intensity_axis": "Intensity after original-axis max normalization",
+        "matching_parameters": "Fixed retrieval preprocessing configuration",
+        "matching_parameter_flow": "V1 parsing → SG(21,3) → AsLS(lam=1e6,p=0.01) → original-axis max normalization → linear interpolation",
+        "matching_grid": "Engineering trial grid: 300–850 cm⁻¹ at 0.5 cm⁻¹, 1,101 points; no extrapolation.",
+        "matching_scientific_note": "Cosine similarity and identity score gaps are not probabilities, confidence, or identification accuracy. Results are candidate database reference labels without independent mineralogical validation.",
+        "matching_application_library_note": "This page uses the experiment 10 application reference library, separate from the frozen 724-spectrum evaluation Gallery. Interactive results are not formal evaluation metrics.",
+        "matching_error_band": "The uploaded spectrum does not fully cover 300–850 cm⁻¹ and cannot be matched without extrapolation.",
+        "matching_error_cache": "The retrieval cache or index is unavailable, or their identity mapping failed validation. Check the experiment 9.3 full cache.",
+        "matching_error_preprocessing": "The uploaded spectrum did not pass the fixed retrieval preprocessing flow. Check the spectrum data and valid intensity range.",
+        "matching_error_generic": "Matching could not be completed with this file. Check the input format and retrieval data.",
     },
 }
 
@@ -218,3 +326,34 @@ def translate_error(language: object, error_message: str) -> str:
     if normalized_language == DEFAULT_LANGUAGE:
         return error_message
     return translate(normalized_language, "invalid_file")
+
+
+def translate_matching_error(language: object, error_message: str) -> str:
+    """Translate known upload, coverage, and cache failures for matching UI."""
+    normalized_language = normalize_language(language)
+    for source_message, translation_key in ERROR_MESSAGE_KEYS.items():
+        if source_message in error_message:
+            return translate(normalized_language, translation_key)
+    normalized_message = error_message.casefold()
+    if (
+        "cannot cover" in normalized_message
+        or "does not cover the target band" in normalized_message
+        or "extrapolation" in normalized_message
+    ):
+        return translate(normalized_language, "matching_error_band")
+    if any(
+        marker in normalized_message
+        for marker in (
+            "npz cache",
+            "index csv",
+            "cache matrix",
+            "cache identity",
+            "index and npz",
+            "reference library",
+            "reference source",
+        )
+    ):
+        return translate(normalized_language, "matching_error_cache")
+    if "preprocessing failed" in normalized_message:
+        return translate(normalized_language, "matching_error_preprocessing")
+    return translate(normalized_language, "matching_error_generic")

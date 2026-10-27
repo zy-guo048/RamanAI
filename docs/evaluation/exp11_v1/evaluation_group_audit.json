@@ -1,0 +1,94 @@
+﻿{
+  "experiment": "11.1",
+  "formal_exclusion_reason_counts": {
+    "label_has_fewer_than_5_eligible_sample_ids": 4558
+  },
+  "groups": {
+    "development_query": {
+      "known_sample_id_count": 60,
+      "record_count": 118
+    },
+    "final_test_query": {
+      "known_sample_id_count": 60,
+      "record_count": 129
+    },
+    "ineligible_exploratory_only": {
+      "known_sample_id_count": 0,
+      "record_count": 0
+    },
+    "reference_gallery": {
+      "known_sample_id_count": 342,
+      "record_count": 724
+    },
+    "sample_group_conflict_exploratory_only": {
+      "known_sample_id_count": 0,
+      "record_count": 0
+    },
+    "sparse_label_not_in_strict_closed_set": {
+      "known_sample_id_count": 2608,
+      "record_count": 4558
+    }
+  },
+  "input": {
+    "cache": "results\\exp09_batch_preprocessing_full\\rruff_preprocessed_300_850_step0p5.npz",
+    "index": "results\\exp09_batch_preprocessing_full\\rruff_preprocessing_index.csv",
+    "reference_filter": "experiment 10 filter: processing_status=success and reference_candidate=True"
+  },
+  "inventory": {
+    "known_sample_id_count": 3070,
+    "known_sample_ids_with_multiple_reference_labels": 0,
+    "label_sample_id_bucket_counts": {
+      "five_or_more": 60,
+      "four": 49,
+      "one": 1208,
+      "three": 132,
+      "two": 404
+    },
+    "multiple_label_sample_examples": [],
+    "records_requiring_review": 0,
+    "records_with_conflict_metadata": 0,
+    "records_with_missing_metadata": 0,
+    "reference_label_count": 1853,
+    "reference_spectrum_count": 5529
+  },
+  "leakage_checks": {
+    "invalid_or_conflicted_identity_examples": [],
+    "invalid_or_conflicted_identity_in_strict_group_count": 0,
+    "measurement_stem_cross_group_count": 0,
+    "measurement_stem_cross_group_examples": [],
+    "passed": true,
+    "processed_filename_examples": [],
+    "processed_filename_in_reference_cache_count": 0,
+    "query_label_missing_from_gallery_count": 0,
+    "query_label_missing_from_gallery_examples": [],
+    "raw_processed_note": "The source is experiment 9.3's admitted RAW-only cache; Processed derivatives are not independent records in this protocol.",
+    "relative_path_cross_group_count": 0,
+    "relative_path_cross_group_examples": [],
+    "same_known_sample_id_cross_group_count": 0,
+    "same_known_sample_id_cross_group_examples": [],
+    "similarity_diagnostic_note": "No spectral-similarity-based identity merging was performed. Similar spectra may be inspected later only as exploratory diagnostics."
+  },
+  "parameters": {
+    "minimum_eligible_sample_ids_per_label": 5,
+    "seed": 42,
+    "split": "per strict label: 1 development Sample_ID, 1 final-test Sample_ID, all remaining Sample_IDs gallery"
+  },
+  "reproducibility": {
+    "all_group_identity_sha256": "07f1b4090427280664f684350014b6564a8a83218d776bb30bbeae74738e8f6a",
+    "distribution_csv_sha256": "3fa9973c0d196ea3c6be76406ccbbd37868fa2332f524f584b54682b250c414b",
+    "final_test_identity_sha256": "d94b630e4cf60ffb532583b52c78997e4276faa743752f1ba974bc30258fde2c",
+    "identity_hash_fields": "sample_id|evaluation_group|relative_path|reference_label_group_key, UTF-8, lexicographically sorted, LF joined",
+    "manifest_csv_sha256": "1467911decc715ed2ab6a4c5214e4ecb170db4b10d7c89a1c2d8dc438ac9aeee",
+    "protocol_markdown_sha256": "9fb3d74fa25dc58532b105075ccb0feba6ca6c6baabfc15c3f89a5b1c4474b74"
+  },
+  "scientific_notes": {
+    "no_metrics_run": "No Top-1, Top-3, or Top-5 retrieval hit rate was computed, and the final-test queries were not searched.",
+    "reference_label": "Candidate database label, not independently validated ground truth.",
+    "sample_id": "Distinct Sample_ID values are grouping identifiers and are not automatically proven independent physical specimens."
+  },
+  "strict_closed_set": {
+    "record_count": 971,
+    "reference_label_count": 60,
+    "sample_id_count": 462
+  }
+}
